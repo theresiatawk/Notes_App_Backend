@@ -1,18 +1,15 @@
-
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
 const authRoutes = require('./routes/auth');
+const noteRoutes = require('./routes/notes');
 
 const app = express();
 
-
-
-
-
 app.use(bodyParser.json()); 
 
+// Adding course headers
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader(
@@ -23,8 +20,13 @@ app.use((req, res, next) => {
   next();
 });
 
+// Registering the routes
 app.use('/auth', authRoutes);
+app.use('/user', noteRoutes);
 
+
+
+//Error handler middleware
 app.use((error, req, res, next) => {
   console.log(error);
   const status = error.statusCode || 500;
@@ -33,6 +35,8 @@ app.use((error, req, res, next) => {
   res.status(status).json({ message: message, data: data });
 });
 
+
+// Connecting to the server
 mongoose
   .connect('mongodb+srv://theresiatawk:Stcharbel@cluster0.rqgpfen.mongodb.net/notesData?retryWrites=true&w=majority'
   )

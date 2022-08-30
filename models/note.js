@@ -8,24 +8,24 @@ const noteSchema = new Schema({
         required: true
     }, 
     content: {
-        type: String, 
-        required: true
+        type: String,
     }, 
     userID: {
-        type: mongoose.Schema.Types.ObjectId, 
+        type: Schema.Types.ObjectId, 
         ref: 'User'
     }, 
     categoryId: {
-        type: mongoose.Schema.Types.ObjectId, 
-        ref: 'Category'
-    }, 
-    createdAt: {
-        type: Date, 
-        default: Date.now()
+        //type: Schema.Types.ObjectId, 
+        //ref: 'Category', 
+        type: String,
+        // required: true
     },
     tags: [{
-        type: mongoose.Schema.Types.ObjectId, 
-        ref: 'Tag'
+        type: String,
+        // required: true
+        // type: Schema.Types.ObjectId, 
+        // ref: 'Tag'
     }]
-});
+}, 
+{ timestamps: true });
 module.exports = mongoose.model('Note', noteSchema);
