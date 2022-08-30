@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 
 const authRoutes = require('./routes/auth');
 const noteRoutes = require('./routes/notes');
+const categoryRoutes = require('./routes/category');
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.use((req, res, next) => {
 // Registering the routes
 app.use('/auth', authRoutes);
 app.use('/user', noteRoutes);
+app.use('/admin', categoryRoutes);
 
 
 
