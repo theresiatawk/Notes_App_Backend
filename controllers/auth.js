@@ -3,6 +3,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const User = require("../models/user");
+const sendEmail = require("../utils/nodemailer");
 
 exports.signup = async (req, res, next) => {
   const errors = validationResult(req);
@@ -29,8 +30,9 @@ exports.signup = async (req, res, next) => {
       name: name,
     });
     const result = await user.save();
+    sendEmail(email);
     res.status(201).json({ message: "User created!", userId: result._id });
-
+  
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;

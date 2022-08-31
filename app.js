@@ -50,5 +50,6 @@ mongoose
   .connect(process.env.DATABASE_URL)
   .then(result => {
     app.listen(process.env.PORT);
+    console.log("Database Connected and running");
   })
   .catch(err => console.log(err));
