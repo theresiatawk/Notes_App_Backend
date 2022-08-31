@@ -4,5 +4,5 @@ const createCategoryValidation = Joi.object({
   name: Joi.string().not().empty().required(),
 });
 module.exports = {
-    createCategory: {body: createCategoryValidation}
+    createCategory: {body: createCategoryValidation},
 };
