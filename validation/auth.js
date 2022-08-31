@@ -1,4 +1,5 @@
 const { Joi } = require("express-validation");
+const User = require('../models/user');
 
 const signupValidation = Joi.object({
     email: 

@@ -13,7 +13,7 @@ module.exports = (req, res, next) => {
     let decodedToken;
 
     try{
-        decodedToken = jwt.verify(token, 'somesupersecretsecret');
+        decodedToken = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
     }
     catch(error) {
         error.statusCode = 500;
