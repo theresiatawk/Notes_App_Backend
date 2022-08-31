@@ -37,3 +37,6 @@ exports.createNote = async (req, res, next) => {
     }
 
 };
+exports.getNotes = async (req, res, next) => {
+
+};

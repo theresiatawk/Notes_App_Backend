@@ -8,6 +8,6 @@ const isAuth = require('../middleware/is-auth');
 
 const router = express.Router();
 
-router.post("/notes", isAuth, validate(validator.createNote, {}, { abortEarly: false }),notesController.createNote);
+router.post("/notes", isAuth, validate(validator.createNote),notesController.createNote);
 
 module.exports = router;
