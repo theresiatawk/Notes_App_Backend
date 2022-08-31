@@ -8,6 +8,8 @@ const isAuth = require('../middleware/is-auth');
 
 const router = express.Router();
 
-router.post("/notes", isAuth, validate(validator.createNote),notesController.createNote);
+router.post("/notes", isAuth, validate(validator.createNote), notesController.createNote);
+router.delete("/notes/:noteId",isAuth, validate(validator.deleteNote), notesController.deleteNote);
+
 
 module.exports = router;

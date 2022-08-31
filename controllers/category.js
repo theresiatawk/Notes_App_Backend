@@ -1,5 +1,6 @@
 const Category = require("../models/category");
 const User = require("../models/user");
+const Note = require("../models/note");
 
 exports.createCategory = async (req, res, next) => {
   const id = req.userId;
@@ -71,8 +72,8 @@ exports.updateCategory = async (req, res, next) => {
   console.log(categoryId);
 
   try {
-    const category = await Category.findById(categoryId);
-    if(!category){
+    const categoryFound = await Category.findById(categoryId);
+    if (!categoryFound) {
       const error = new Error("Category Not Found");
       error.statusCode = 404;
       throw error;
@@ -81,10 +82,11 @@ exports.updateCategory = async (req, res, next) => {
       { _id: categoryId },
       { $set: { name: name } }
     );
-    console.log(result);
+    const categoryUpdated = await Category.findById(categoryId);
     res.status(200).json({
-        message: "Category updated successfully",
-        updatedCategory: category});
+      message: "Category updated successfully",
+      updatedCategory: categoryUpdated,
+    });
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;
@@ -92,5 +94,29 @@ exports.updateCategory = async (req, res, next) => {
     next(err);
   }
 };
+exports.deleteCategory = async (req, res, next) => {
+  const categoryId = req.params.categoryId;
+  try {
+  const notesOfThisCatCount = await Note.find({
+    category: categoryId,
+  }).countDocuments();
+  if (notesOfThisCatCount > 0) {
+    const error = new Error("Cannot delete this category, it's linked to notes.");
+    error.statusCode = 401;
+    throw error;
+  }
 
-
+    const result = await Category.deleteOne({ id: categoryId });
+    if(result.deletedCount === 0){
+        const error = new Error("This Category is not found. Deletion unsuccessful.");
+        error.statusCode = 401;
+        throw error;
+    }
+    res.status(200).json({message: "Deleted Successfully"});
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
