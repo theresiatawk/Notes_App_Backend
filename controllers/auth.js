@@ -32,7 +32,6 @@ exports.signup = async (req, res, next) => {
     const result = await user.save();
     sendEmail(email);
     res.status(201).json({ message: "User created!", userId: result._id });
-  
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;
@@ -45,14 +44,14 @@ exports.login = async (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
   let loadedUser;
-  const user = await User.findOne({ email: email });
-  if (!user) {
-    const error = new Error("A user with this email could not be found.");
-    error.statusCode = 401;
-    throw error;
-  }
-  loadedUser = user;
   try {
+    const user = await User.findOne({ email: email });
+    if (!user) {
+      const error = new Error("A user with this email could not be found.");
+      error.statusCode = 401;
+      throw error;
+    }
+    loadedUser = user;
     const isEqual = await bcrypt.compare(password, user.password);
     if (!isEqual) {
       const error = new Error("Wrong password!");
@@ -69,9 +68,9 @@ exports.login = async (req, res, next) => {
     );
     res.status(200).json({ token: token, userId: loadedUser._id.toString() });
   } catch (error) {
-    if (!err.statusCode) {
-      err.statusCode = 500;
+    if (!error.statusCode) {
+      error.statusCode = 500;
     }
-    next(err);
+    next(error);
   }
 };

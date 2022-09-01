@@ -9,7 +9,6 @@ const router = express.Router();
 
 router.put("/signup", validate(validator.signup, {}, { abortEarly: false }),authController.signup);
 
-
 router.post("/login", authController.login);
 
 module.exports = router;

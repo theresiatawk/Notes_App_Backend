@@ -1,6 +1,8 @@
+const mongoose = require("mongoose");
 const Note = require("../models/note");
 const User = require("../models/user");
 const Category = require("../models/category");
+const { tag } = require("@hapi/joi/lib/base");
 
 exports.createNote = async (req, res, next) => {
   const id = req.userId;
@@ -34,6 +36,61 @@ exports.createNote = async (req, res, next) => {
     });
 
     // res.status(201).send(noteResult);
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+  }
+};
+exports.getNotes = async (req, res, next) => {
+  const userId = req.userId;
+  const categoryId = req.body.categoryId;
+  const tagName = req.body.tagName;
+
+  const filters = {};
+  try {
+    if (categoryId) {
+      filters.categoryId = mongoose.Types.ObjectId(categoryId);
+    }
+    if (tagName) {
+      filters.tags = { $in: [tagName.toString()] };
+    }
+    const notesAggregation = [
+      { $match: { userId: mongoose.Types.ObjectId(userId) } },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "categoryId",
+          foreignField: "_id",
+          as: "Category",
+        },
+      },
+      // { $unwind: { path: "$tags", preserveNullAndEmptyArrays: true } },
+      {
+        $lookup: {
+          from: "tags",
+          localField: "tags",
+          foreignField: "_id",
+          as: "Tags",
+        },
+      },
+      { $sort: { updateAt: -1 } },
+    ];
+
+    if (Object.keys(filters).length > 0) {
+      notesAggregation.unshift({ $match: filters });
+    }
+    const notes = await Note.aggregate(notesAggregation);
+    if (notes.length === 0) {
+      res.status(200).json({
+        message: "No Notes Found",
+      });
+    } else {
+      res.status(200).json({
+        Note: notes,
+      });
+    }
   } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;
