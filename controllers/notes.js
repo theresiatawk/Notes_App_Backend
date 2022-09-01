@@ -99,6 +99,7 @@ exports.getNotes = async (req, res, next) => {
   }
 };
 exports.updateNote = async (req, res, next) => {
+  const id = req.userId;
   const noteId = req.params.noteId;
   const title = req.body.title;
   const content = req.body.content;
@@ -109,6 +110,11 @@ exports.updateNote = async (req, res, next) => {
     if (!noteFound) {
       const error = new Error("Note Not Found");
       error.statusCode = 404;
+      throw error;
+    }
+    if (noteFound.userId.toString() !== id) {
+      const error = new Error("Not Authorized to do this action.");
+      error.statusCode = 403;
       throw error;
     }
     const categoryFound = await Category.findById(categoryId);
@@ -144,7 +150,14 @@ exports.updateNote = async (req, res, next) => {
 };
 exports.deleteNote = async (req, res, next) => {
   const noteId = req.params.noteId;
+  const id = req.userId;
   try {
+    const noteFound = await Note.findById(noteId);
+    if (noteFound?.userId.toString() !== id) {
+        const error = new Error("Not Authorized to do this action.");
+        error.statusCode = 403;
+        throw error;
+    }
     const result = await Note.deleteOne({ _id: noteId });
     if (result.deletedCount === 0) {
       const error = new Error("This Note is not found. Deletion unsuccessful.");
