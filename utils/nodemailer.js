@@ -17,7 +17,7 @@ const sendEmail =(userEmail)=>{
   const mailOptions = {
     from: senderEmail,
     to: userEmail,
-    subject: 'Welcome To Our Community',
+    subject: 'Welcome To Our App',
     text: 'We are happy to welcome you.'
   };
 

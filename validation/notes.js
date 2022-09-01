@@ -12,5 +12,6 @@ const noteIdValidation = Joi.object({
 });
 module.exports = {
     createNote:{body: createNoteValidation},
-    deleteNote:{params: noteIdValidation}
+    deleteNote:{params: noteIdValidation},
+    updateNote:{params: noteIdValidation, body: createNoteValidation}
 };
